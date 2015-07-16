@@ -1,6 +1,6 @@
 {
   "name": "js-inspect-helpers",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Helpers for inspecting JS code",
   "main": "index.js",
   "scripts": {
