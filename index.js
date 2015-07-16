@@ -1,5 +1,6 @@
 var esprima = require('esprima'),
-    estraverse = require('estraverse');
+    estraverse = require('estraverse'),
+    astronaut = require('astronaut');
 
 function getGlobalVariableNames (source, sourceGlobals) {
     var ast = esprima.parse(source);
@@ -95,6 +96,59 @@ function getGlobalVariableNames (source, sourceGlobals) {
     return requires;
 }
 
+function instrumentErrorReporting(source, name, errorReportFn) {
+        var ast = esprima.parse(source, {loc: true, range: true, comment: true}), marks = [];
+        
+        astronaut(ast).walk(function (node) {
+            var nodeAst = node.ast();
+            if (nodeAst.comments && nodeAst.comments.length && nodeAst.comments[0].value === 'origami:ignore') return;
+            
+            if (node.isBlockStatement() && !(
+                node.parent &&
+                node.parent.data &&
+                node.parent.data.type == "IfStatement")) {
+                
+                if (nodeAst.body.length) {
+                    marks.push({
+                        offset: nodeAst.body[0].range[0],
+                        type: 'start'
+                    },{
+                        offset: nodeAst.body[nodeAst.body.length - 1].range[1],
+                        type: 'end'
+                    });
+                }
+            }
+        });
+        
+        marks.sort(function (m, m2) {
+            if (m.offset < m2.offset) return -1;
+            if (m.offset > m2.offset) return 1;
+            
+            return 0;
+        });
+        
+        var instru = {
+            start: "try{",
+            end: "}catch(e){" + errorReportFn + "(e," + JSON.stringify(name) + ");throw e}"
+        };
+        
+        if (!marks.length) return instru.start + source + instru.end;
+        
+        var i = 0, prev = 0, newSource = "";
+        
+        while(marks.length) {
+            var current = marks.shift();
+            
+            newSource = newSource + source.slice(prev, current.offset) + instru[current.type];
+            
+            prev = current.offset;
+        }
+        newSource = instru.start + newSource + source.slice(prev) + "\n" + instru.end;
+        
+        return newSource;
+    }
+
 module.exports = {
-  getGlobalVariableNames: getGlobalVariableNames
+  getGlobalVariableNames: getGlobalVariableNames,
+  instrumentErrorReporting: instrumentErrorReporting
 };

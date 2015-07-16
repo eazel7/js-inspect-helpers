@@ -31,3 +31,56 @@ describe('getGlobalVariableNames', function () {
     assert(result.indexOf('c') > -1);
   });
 });
+describe('instrumentErrorReporting', function () {
+  it('instruments error reporting', function () {
+    var code = 'throw new Error(\'My error\');';
+    var result = require('..').instrumentErrorReporting(code, 'myCode', 'reportError');
+  
+    var reported = [];
+  
+    try {
+      require('vm').runInNewContext(result, {
+        reportError: function (e, name) {
+          reported.push({
+            e: e,
+            name: name
+          });
+        }
+      });
+      
+      assert.fail('Exception not thrown');
+    } catch (e) {
+      assert(reported.length === 1);
+      assert(reported[0].e === e);
+      assert(reported[0].name === 'myCode');
+    }
+  });
+  
+  it('for loop error instrumentation is expected be traced two times', function () {
+      var code = 'for (var i = 0; i < 1; i++) {\n' +
+                 '  throw new Error(\'Some error: \' + i);\n' +
+                 '}';
+      var result = require('..').instrumentErrorReporting(code, 'myCode', 'reportError');
+    
+      var reported = [];
+    
+      try {
+        require('vm').runInNewContext(result, {
+          reportError: function (e, name) {
+            reported.push({
+              e: e,
+              name: name
+            });
+          }
+        });
+        
+        assert.fail('Exception not thrown');
+      } catch (e) {
+        assert(reported.length === 2);
+        assert(reported[0].e === e);
+        assert(reported[0].name === 'myCode');
+        assert(reported[1].e === e);
+        assert(reported[1].name === 'myCode');
+      }
+  });
+});

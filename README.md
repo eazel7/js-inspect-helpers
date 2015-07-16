@@ -25,3 +25,23 @@ require('js-inspect-helpers').getGlobalVariableNames(code);
 
 should return `['a','c']`, knowing that `b()` is referring to a parameter name, etc.
 
+
+### `instrumentErrorReporting(code, name)` function
+
+```
+require('js-inspect-helpers').instrumentErrorReporting('a()', 'reportError', 'myCode');
+```
+should return:
+
+```
+try {
+  a();
+} catch(e) {
+  reportError(e,'myCode');
+  throw e;
+}
+```
+
+> Indentation added for reading purposes. Added code blocks are collapsed so the error line number is the same as in the original code.
+
+So the transformed code keep working just the same, except that uncatched exceptions are reported along the way to the `reportError(e, name)` function.
