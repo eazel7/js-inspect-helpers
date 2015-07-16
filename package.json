@@ -1,6 +1,6 @@
 {
   "name": "js-inspect-helpers",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Helpers for inspecting JS code",
   "main": "index.js",
   "scripts": {
@@ -12,8 +12,6 @@
     "mocha": "^2.2.5"
   },
   "dependencies": {
-    "astronaut": "^0.1.4",
-    "escodegen": "^1.6.1",
     "esprima": "^2.4.1",
     "estraverse": "^4.1.0"
   },
