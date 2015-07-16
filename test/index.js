@@ -56,7 +56,7 @@ describe('instrumentErrorReporting', function () {
     }
   });
   
-  it('for loop error instrumentation is expected be traced two times', function () {
+  it('for loop error instrumentation is expected NOT be traced two times', function () {
       var code = 'for (var i = 0; i < 1; i++) {\n' +
                  '  throw new Error(\'Some error: \' + i);\n' +
                  '}';
@@ -76,11 +76,9 @@ describe('instrumentErrorReporting', function () {
         
         assert.fail('Exception not thrown');
       } catch (e) {
-        assert(reported.length === 2);
+        assert(reported.length === 1);
         assert(reported[0].e === e);
         assert(reported[0].name === 'myCode');
-        assert(reported[1].e === e);
-        assert(reported[1].name === 'myCode');
       }
   });
 });

@@ -103,10 +103,11 @@ function instrumentErrorReporting(source, name, errorReportFn) {
             var nodeAst = node.ast();
             if (nodeAst.comments && nodeAst.comments.length && nodeAst.comments[0].value === 'origami:ignore') return;
             
-            if (node.isBlockStatement() && !(
+            if (node.isBlockStatement() && (!(
                 node.parent &&
                 node.parent.data &&
-                node.parent.data.type == "IfStatement")) {
+                (node.parent.data.type == "IfStatement" ||
+                node.parent.data.type == "ForStatement")))) {
                 
                 if (nodeAst.body.length) {
                     marks.push({
