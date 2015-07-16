@@ -16,4 +16,18 @@ describe('getGlobalVariableNames', function () {
     assert(result.indexOf('a') > -1);
     assert(result.indexOf('b') > -1);
   });
+  it('gets a and c', function () {
+      var code = '' +
+        'a();' +
+        '(function (b) {' +
+        ' b();' +
+        ' c();' +
+        '})(a);';
+    var result = require('..').getGlobalVariableNames(code);
+    
+    assert(result);
+    assert(result.length === 2);
+    assert(result.indexOf('a') > -1);
+    assert(result.indexOf('c') > -1);
+  });
 });

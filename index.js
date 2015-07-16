@@ -96,6 +96,5 @@ function getGlobalVariableNames (source, sourceGlobals) {
 }
 
 module.exports = {
-  getGlobalVariableNames: getGlobalVariableNames,
-  
+  getGlobalVariableNames: getGlobalVariableNames
 };
