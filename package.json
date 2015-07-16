@@ -1,11 +1,20 @@
 {
-  "name": "le-nuage",
+  "name": "js-inspect-helpers",
   "version": "0.0.1",
-  "description": "",
+  "description": "Helpers for inspecting JS code",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "author": "Diego Pérez <eazel7@gmail.com>",
-  "license": "BSD"
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "astronaut": "^0.1.4",
+    "escodegen": "^1.6.1",
+    "esprima": "^2.4.1",
+    "estraverse": "^4.1.0"
+  }
 }
