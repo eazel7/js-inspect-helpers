@@ -1,15 +1,17 @@
 {
   "name": "js-inspect-helpers",
-  "version": "0.0.13",
+  "version": "0.0.16",
   "description": "Helpers for inspecting JS code",
   "main": "index.js",
   "scripts": {
+    "prepublish": "./build.sh",
     "test": "mocha"
   },
   "author": "Diego Pérez <eazel7@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "semver": "^5.0.1"
   },
   "dependencies": {
     "astronaut": "^0.1.4",

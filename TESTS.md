@@ -261,3 +261,29 @@ var obj = child.inject(withParameter, {});
 assert(obj.a === 1);
 ```
 
+sets new default value.
+
+```js
+var injector = new Injector({a: 1});
+
+injector.setDefault('a', 2);
+
+var obj = injector.inject(withParameter, {});
+
+assert(obj.a === 2);
+```
+
+unsets default value.
+
+```js
+var injector = new Injector({a: 1});
+
+injector.unsetDefault('a');
+
+try {
+  injector.inject(withParameter, {});
+} catch (e) {
+  if (e.message !== 'Missing parameter \'a\'') throw e;
+}
+```
+
