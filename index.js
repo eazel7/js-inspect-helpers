@@ -101,8 +101,7 @@ function instrumentErrorReporting(source, name, errorReportFn) {
         
         astronaut(ast).walk(function (node) {
             var nodeAst = node.ast();
-            if (nodeAst.comments && nodeAst.comments.length && nodeAst.comments[0].value === 'origami:ignore') return;
-            
+
             if (node.isBlockStatement() && (!(
                 node.parent &&
                 node.parent.data &&
