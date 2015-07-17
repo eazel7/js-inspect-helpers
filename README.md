@@ -45,3 +45,60 @@ try {
 > Indentation added for reading purposes. Added code blocks are collapsed so the error line number is the same as in the original code.
 
 So the transformed code keep working just the same, except that uncatched exceptions are reported along the way to the `reportError(e, name)` function.
+
+### `getFunctionBody`
+
+Receives a string or a function object and returns function body block as a string.
+
+```
+require('js-inspection-helpers').getFunctionBody(function () {console.log(1);});
+```
+
+should return:
+
+```
+'console.log(1);'
+```
+
+### `getFunctionArgumentNames`
+
+Receives a string or a function object and returns function argument names as an array of strings.
+
+```
+require('js-inspection-helpers').getFunctionBody(function (a,b,c) {});
+```
+
+should return:
+
+```
+['a','b','c']
+```
+
+### `createInjector`
+
+Should return a simple Injector object.
+
+## Injector object
+
+### Constructor new Injector()
+
+Should return a simple Injector object.
+
+### Method .inject(constructor, context)
+
+Should create a JS object using the constructor function and passing the arguments from dictionary object, matching them by name.
+
+This code should be valid:
+
+```
+function MyClass(someValue) {
+  this.someValue = someValue;
+}
+
+var injector = require('js-inspection-helpers').createInjector();
+
+var obj = injector.inject(MyClass, { someValue: 1 });
+
+assert(obj.someValue === 1);
+```
+
