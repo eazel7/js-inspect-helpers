@@ -10,10 +10,10 @@ describe('Wrapper', function () {
     };
   }
   
-  it('.wrap wraps a simple function', function () {
+  it('.wrapSync wraps a simple function', function () {
     var wrapper = new Wrapper();
     
-    var wrapped = wrapper.wrap(simple);
+    var wrapped = wrapper.wrapSync(simple);
     
     var thisOutside = {};
     
@@ -36,10 +36,10 @@ describe('Wrapper', function () {
     return this.a + this.b;
   };
   
-  it('.wrap wraps a prototype function', function () {
+  it('.wrapSync wraps a prototype function', function () {
     var wrapper = new Wrapper();
     
-    var wrapped = wrapper.wrap(complex);
+    var wrapped = wrapper.wrapSync(complex);
     var obj = new wrapped(1);
     
     obj.test1(2);
@@ -48,43 +48,29 @@ describe('Wrapper', function () {
     assert(obj.b === 2);
   });
   
-  it('wrapped object methods calls before function before calling method', function () {
-    var wrapper = new Wrapper({
-      test1: function () {
-        assert(this === obj);
-        throw new Error('Deny');
-      }
+  it('wrapped functions calls after method after invoke', function (done) {
+    var wrapper = new Wrapper();
+    
+    var wrapped = wrapper.wrapSync(function (a) {
+      return a;
+    }, function () {}, function (a) {
+      assert(a === 2);
+      done();
     });
     
-    var wrapped = wrapper.wrap(complex);
-    var obj = new wrapped(1);
-    
-    try {
-      obj.test1(2);
-      
-      assert.fail();
-    } catch (e) {
-      assert(e.message === 'Deny');
-    }
+    wrapped(2);
   });
   
-  it('wrapped object methods calls a function before calling method', function () {
-    var afterCalled = false;
-  
-    var wrapper = new Wrapper({}, {
-      test1: function (b) {
-        assert(this === obj);
-        assert(b === 2);
-        afterCalled = true;
-      }
+  it('wrapped functions calls before function on invoke', function (done) {
+    var wrapper = new Wrapper();
+    
+    var wrapped = wrapper.wrapSync(function () {}, function (b) {
+      assert(b === 2);
+      
+      done();
     });
     
-    var wrapped = wrapper.wrap(complex);
-    var obj = new wrapped(1);
-    
-    obj.test1(2);
-    
-    assert(afterCalled);
+    wrapped(2);
   });
   
   it('.wrapAsync returns a promise object when wrapping functions', function (done) {

@@ -1,47 +1,33 @@
 var Defer = require('q').defer;
 
-function Wrapper(before, after) {
-  this.before = before || {};
-  this.after = after || {};
+function Wrapper() {
 }
 
-Wrapper.prototype.wrap = function (original) {
-  var before = this.before,
-      after = this.after;
-  
-  var newFn = function () {
+Wrapper.prototype.wrapSync = function (original, before, after) {
+  var newFn = function (original, before, after) {
     var newConstructor = function () {
       var originalThis = this;
       
       var originalArguments = [];
+      
       for (var i = 0; i < arguments.length; i++) originalArguments.push(arguments[i]);
       
-      return original.apply(originalThis, originalArguments);
+      if (before) before.apply(originalThis, originalArguments);
+      var result = original.apply(originalThis, originalArguments);
+      if (after) after.apply(originalThis, originalArguments);
+      
+      return result;
     };
     
-    newConstructor.prototype = {};
-    
-    for (var k in original.prototype) {
-      newConstructor.prototype[k] = function () {
-        if (before[k]) before[k].apply(this, arguments);
-        var result = original.prototype[k].apply(this, arguments);
-        
-        if (after[k]) after[k].apply(this, arguments);
-        
-        return result;
-      };
-    }
+    newConstructor.prototype = original.prototype;
     
     return newConstructor;
   };
   
-  return newFn(original);
+  return newFn(original, before, after);
 };
 
-Wrapper.prototype.wrapAsync = function (original) {
-  var before = this.before,
-      after = this.after;
-  
+Wrapper.prototype.wrapAsync = function (original, before, after) {
   var newFn = function (original, before, after) {
     return function () {
       var originalThis = this;        
@@ -53,7 +39,11 @@ Wrapper.prototype.wrapAsync = function (original) {
       
       process.nextTick(function () {
         try {
+          if (before) before.apply(originalThis, originalArguments);
+        
           var realResult = original.apply(originalThis, originalArguments);
+          
+          if (after) after.apply(originalThis, originalArguments);
           
           defer.resolve(realResult);
         } catch (e) {
