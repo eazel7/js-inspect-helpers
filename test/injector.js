@@ -35,4 +35,42 @@ describe('Injector', function () {
     
     assert(obj.a === 1);
   });
+  
+  it('creates a child injector', function () {
+    var parent = new Injector({a: 1});
+    var child = parent.createChild({a: 2});
+    var obj = child.inject(withParameter, {});
+    
+    assert(obj.a === 2);
+  });
+  
+  it('child injector obeys parent injector defaults', function () {
+    var parent = new Injector({a: 1});
+    var child = parent.createChild();
+    var obj = child.inject(withParameter, {});
+    
+    assert(obj.a === 1);
+  });
+  
+  it('sets new default value', function () {
+    var injector = new Injector({a: 1});
+    
+    injector.setDefault('a', 2);
+    
+    var obj = injector.inject(withParameter, {});
+    
+    assert(obj.a === 2);
+  });
+  
+  it('unsets default value', function () {
+    var injector = new Injector({a: 1});
+    
+    injector.unsetDefault('a');
+    
+    try {
+      injector.inject(withParameter, {});
+    } catch (e) {
+      if (e.message !== 'Missing parameter \'a\'') throw e;
+    }
+  });
 });

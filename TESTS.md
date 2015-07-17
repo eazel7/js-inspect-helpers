@@ -4,6 +4,8 @@
    - [getFunctionArgumentNames](#getfunctionargumentnames)
    - [getFunctionBody](#getfunctionbody)
    - [getFunctionName](#getfunctionname)
+   - [injector](#injector)
+   - [Injector](#injector)
 <a name=""></a>
  
 <a name="getglobalvariablenames"></a>
@@ -190,5 +192,72 @@ takes function objects as parameter.
 var result = require('..').getFunctionName(function myFunction(a) {});
 
 assert(result === 'myFunction');
+```
+
+<a name="injector"></a>
+# injector
+creates Injector object.
+
+```js
+var injector = require('..').createInjector();
+
+assert(injector.constructor === require('../injector'));
+```
+
+<a name="injector"></a>
+# Injector
+return parameterless constructor object.
+
+```js
+var obj = new Injector().inject(parameterless);
+
+assert(obj.constructor === parameterless);
+```
+
+return parametrized constructor object.
+
+```js
+var obj = new Injector().inject(withParameter, {a: 1});
+
+assert(obj.constructor === withParameter);
+assert(obj.a === 1);
+```
+
+reports missing parameter.
+
+```js
+try {
+  new Injector().inject(withParameter, {});
+} catch (e) {
+  if (e.message !== 'Missing parameter \'a\'') throw e;
+}
+```
+
+uses default context values.
+
+```js
+var obj = new Injector({a: 1}).inject(withParameter, {});
+
+assert(obj.a === 1);
+```
+
+creates a child injector.
+
+```js
+var parent = new Injector({a: 1});
+var child = parent.createChild({a: 2});
+var obj = child.inject(withParameter, {});
+
+assert(obj.a === 2);
+```
+
+child injector obeys parent injector defaults.
+
+```js
+var parent = new Injector({a: 1});
+var child = parent.createChild();
+var obj = child.inject(withParameter, {});
+
+assert(obj.a === 1);
 ```
 

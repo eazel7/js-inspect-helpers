@@ -111,11 +111,68 @@ function MyClass(someValue) {
   this.someValue = someValue;
 }
 
-var injector = require('js-inspection-helpers').createInjector({a:2});
+var injector = require('js-inspection-helpers').createInjector({someValue: 2});
 
 var obj = injector.inject(MyClass, {});
 
 assert(obj.someValue === 2);
+```
+
+### Method .createChild(newDefaults)
+
+Creates a child injector that falls back to it's parent defaults.
+
+This code should be valid:
+
+```
+function MyClass(someValue, someValue2) {
+  this.someValue = someValue;
+  this.someValue2 = someValue2;
+}
+
+var parent = require('js-inspection-helpers').createInjector({someValue:2});
+var child = parent.createChild({someValue2: 2});
+
+var obj = child.inject(MyClass, {});
+
+assert(obj.someValue === 1);
+assert(obj.someValue2 === 2);
+```
+
+### Method .setDefault(key, value)
+
+Sets a new default value for an injector.
+
+This code should be valid:
+
+```
+function MyClass(someValue) {
+  this.someValue = someValue;
+}
+
+var injector = require('js-inspection-helpers').createInjector({someValue:1});
+
+injector.setDefault('someValue', 2);
+var obj = injector.inject(MyClass, {});
+
+assert(obj.someValue === 2);
+```
+
+### Method .unsetDefault(key, value)
+
+Unsets a new default value for an injector.
+
+This code should throw a 'Missing parameter' error:
+
+```
+function MyClass(someValue) {
+  this.someValue = someValue;
+}
+
+var injector = require('js-inspection-helpers').createInjector({someValue:1});
+
+injector.unsetDefault('someValue');
+injector.inject(MyClass, {});
 ```
 
 
