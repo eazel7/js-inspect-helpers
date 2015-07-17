@@ -51,13 +51,15 @@ Wrapper.prototype.wrapAsync = function (original) {
       
       var defer = new Defer();
       
-      try {
-        var realResult = original.apply(originalThis, originalArguments);
-        
-        defer.resolve(realResult);
-      } catch (e) {
-        defer.reject(e);
-      }
+      process.nextTick(function () {
+        try {
+          var realResult = original.apply(originalThis, originalArguments);
+          
+          defer.resolve(realResult);
+        } catch (e) {
+          defer.reject(e);
+        }
+      });
       
       return defer.promise;
     };
