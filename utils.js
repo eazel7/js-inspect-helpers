@@ -1,14 +1,9 @@
 var esprima = require('esprima'),
     estraverse = require('estraverse'),
     astronaut = require('astronaut');
-
-function getGlobalVariableNames (source, sourceGlobals) {
-    var ast = esprima.parse(source);
-    var scopeChain = [];
-    var identifiers = [];
-    var requires = [];
     
-    var jsGlobals = sourceGlobals || [
+function getJSGlobals() {
+  var standard = [
       "decodeURI",
       "decodeURIComponent",
       "encodeURI",
@@ -22,6 +17,17 @@ function getGlobalVariableNames (source, sourceGlobals) {
       "parseInt",
       "String",
       "unescape"];
+      
+  return standard;
+}
+
+function getGlobalVariableNames (source, sourceGlobals) {
+    var ast = esprima.parse(source);
+    var scopeChain = [];
+    var identifiers = [];
+    var requires = [];
+    
+    var jsGlobals = sourceGlobals || getJSGlobals();
     
     estraverse.traverse(ast, {
       enter: enter,
@@ -203,5 +209,6 @@ module.exports = {
   getFunctionArgumentNames: getFunctionArgumentNames,
   getGlobalVariableNames: getGlobalVariableNames,
   instrumentErrorReporting: instrumentErrorReporting,
-  createInjector: createInjector
+  createInjector: createInjector,
+  getJSGlobals: getJSGlobals
 };
