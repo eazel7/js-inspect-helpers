@@ -1,7 +1,6 @@
 var Wrapper = require('../wrapper'),
     assert = require('assert');
 
-
 describe('Wrapper', function () {
   function simple() {
     return {

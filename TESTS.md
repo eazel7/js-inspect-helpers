@@ -4,8 +4,10 @@
    - [getFunctionArgumentNames](#getfunctionargumentnames)
    - [getFunctionBody](#getfunctionbody)
    - [getFunctionName](#getfunctionname)
-   - [injector](#injector)
+   - [.createInjector](#createinjector)
+   - [.createWrapper](#createwrapper)
    - [Injector](#injector)
+   - [Wrapper](#wrapper)
 <a name=""></a>
  
 <a name="getglobalvariablenames"></a>
@@ -194,14 +196,24 @@ var result = require('..').getFunctionName(function myFunction(a) {});
 assert(result === 'myFunction');
 ```
 
-<a name="injector"></a>
-# injector
+<a name="createinjector"></a>
+# .createInjector
 creates Injector object.
 
 ```js
 var injector = require('..').createInjector();
 
 assert(injector.constructor === require('../injector'));
+```
+
+<a name="createwrapper"></a>
+# .createWrapper
+creates a Wrapper object.
+
+```js
+var wrapper = require('..').createWrapper();
+
+assert(wrapper.constructor === require('../wrapper'));
 ```
 
 <a name="injector"></a>
@@ -285,5 +297,125 @@ try {
 } catch (e) {
   if (e.message !== 'Missing parameter \'a\'') throw e;
 }
+```
+
+<a name="wrapper"></a>
+# Wrapper
+.wrapSync wraps a simple function.
+
+```js
+var wrapper = new Wrapper();
+
+var wrapped = wrapper.wrapSync(simple);
+
+var thisOutside = {};
+
+var result = wrapped.apply(thisOutside, [1,2,3]);
+
+assert(thisOutside === result['this']);
+assert(result['arguments'].length === 3);
+assert(result['arguments'][0] === 1);
+assert(result['arguments'][1] === 2);
+assert(result['arguments'][2] === 3);
+```
+
+.wrapSync wraps a prototype function.
+
+```js
+var wrapper = new Wrapper();
+
+var wrapped = wrapper.wrapSync(complex);
+var obj = new wrapped(1);
+
+obj.test1(2);
+
+assert(obj.a === 1);
+assert(obj.b === 2);
+```
+
+wrapped functions calls after method after invoke.
+
+```js
+var wrapper = new Wrapper();
+
+var wrapped = wrapper.wrapSync(function (a) {
+  return a;
+}, function () {}, function (a) {
+  assert(a === 2);
+  done();
+});
+
+wrapped(2);
+```
+
+wrapped functions calls before function on invoke.
+
+```js
+var wrapper = new Wrapper();
+
+var wrapped = wrapper.wrapSync(function () {}, function (b) {
+  assert(b === 2);
+  
+  done();
+});
+
+wrapped(2);
+```
+
+.wrapAsync returns a promise object when wrapping functions.
+
+```js
+var wrapper = new Wrapper();
+
+var wrapped = wrapper.wrapAsync(function (a, b) {
+  return a + b;
+});
+var promise = new wrapped(1, 2);
+
+promise.then(function (result) {
+  assert(result === 3);
+  
+  done();
+});
+```
+
+.wrapConstructorSync wraps before methods prototype with map.
+
+```js
+var wrapper = new Wrapper();
+
+function MyClass() {
+}
+
+MyClass.prototype.test1 = function () {
+};
+
+var Wrapped = wrapper.wrapConstructorSync(MyClass, {test1: function () {
+  done();
+}});
+
+var obj = new Wrapped(1,2);
+
+obj.test1();
+```
+
+.wrapConstructorSync wraps after methods prototype with map.
+
+```js
+var wrapper = new Wrapper();
+
+function MyClass() {
+}
+
+MyClass.prototype.test1 = function () {
+};
+
+var Wrapped = wrapper.wrapConstructorSync(MyClass, {}, {test1: function () {
+  done();
+}});
+
+var obj = new Wrapped(1,2);
+
+obj.test1();
 ```
 
