@@ -153,10 +153,18 @@ describe('getFunctionName', function () {
   });
 });
 
-describe('injector', function () {
+describe('.createInjector', function () {
   it('creates Injector object', function () {
     var injector = require('..').createInjector();
     
     assert(injector.constructor === require('../injector'));
+  });
+});
+
+describe('.createWrapper', function () {
+  it('creates a Wrapper object', function () {
+    var wrapper = require('..').createWrapper();
+    
+    assert(wrapper.constructor === require('../wrapper'));
   });
 });

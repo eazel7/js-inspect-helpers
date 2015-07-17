@@ -1,8 +1,13 @@
 var Injector = require('./injector'),
+    Wrapper = require('./wrapper'),
     utils = require('./utils');
 
 function createInjector() {
   return new Injector();
+}
+
+function createWrapper() {
+  return new Wrapper();
 }
 
 module.exports = {
@@ -11,5 +16,6 @@ module.exports = {
   getFunctionArgumentNames: utils.getFunctionArgumentNames,
   getGlobalVariableNames: utils.getGlobalVariableNames,
   instrumentErrorReporting: utils.instrumentErrorReporting,
-  createInjector: createInjector
+  createInjector: createInjector,
+  createWrapper: createWrapper
 };
