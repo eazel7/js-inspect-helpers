@@ -80,11 +80,11 @@ Should return a simple Injector object.
 
 ## Injector object
 
-### Constructor new Injector()
+### Constructor new Injector(defaults)
 
-Should return a simple Injector object.
+Should return a simple Injector object. Defaults is an optional object.
 
-### Method .inject(constructor, context)
+### Method .inject(constructor, [context])
 
 Should create a JS object using the constructor function and passing the arguments from dictionary object, matching them by name.
 
@@ -101,4 +101,21 @@ var obj = injector.inject(MyClass, { someValue: 1 });
 
 assert(obj.someValue === 1);
 ```
+
+Also, if an argument is missing in context collection, but present in the defaults, it should be used.
+
+This code should be valid:
+
+```
+function MyClass(someValue) {
+  this.someValue = someValue;
+}
+
+var injector = require('js-inspection-helpers').createInjector({a:2});
+
+var obj = injector.inject(MyClass, {});
+
+assert(obj.someValue === 2);
+```
+
 

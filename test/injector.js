@@ -29,4 +29,10 @@ describe('Injector', function () {
       if (e.message !== 'Missing parameter \'a\'') throw e;
     }
   });
+  
+  it('uses default context values', function () {
+    var obj = new Injector({a: 1}).inject(withParameter, {});
+    
+    assert(obj.a === 1);
+  });
 });

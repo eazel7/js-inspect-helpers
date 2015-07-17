@@ -1,9 +1,11 @@
 var utils = require('./utils');
 
-function Injector() {
+function Injector(defaults) {
+  this.defaults = defaults || {};
 }
 
 Injector.prototype.inject = function (constructor, context) {
+  context = context || {};
   var obj = Object.create(constructor.prototype);
   
   var argNames = utils.getFunctionArgumentNames(constructor);
@@ -11,11 +13,12 @@ Injector.prototype.inject = function (constructor, context) {
   var args = [];
   
   for (var i = 0; i < argNames.length; i++) {
-    if (Object.keys(context).indexOf(argNames[i]) === -1) throw new Error('Missing parameter \'' + argNames[i] + '\'');
-  
-    var argVal = context[argNames[i]];
-    
-    args.push(argVal);
+    var argName = argNames[i];
+    if (Object.keys(context).indexOf(argName) > -1) {
+      args.push(context[argName]);    
+    } else if (Object.keys(this.defaults).indexOf(argName) > -1) {
+      args.push(this.defaults[argName]);
+    } else throw new Error('Missing parameter \'' + argName + '\'');
   }
   
   constructor.apply(obj, args);
