@@ -11,7 +11,11 @@ Injector.prototype.inject = function (constructor, context) {
   var args = [];
   
   for (var i = 0; i < argNames.length; i++) {
-    args.push(context[argNames[i]]);
+    if (Object.keys(context).indexOf(argNames[i]) === -1) throw new Error('Missing parameter \'' + argNames[i] + '\'');
+  
+    var argVal = context[argNames[i]];
+    
+    args.push(argVal);
   }
   
   constructor.apply(obj, args);

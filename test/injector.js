@@ -21,4 +21,12 @@ describe('Injector', function () {
     assert(obj.constructor === withParameter);
     assert(obj.a === 1);
   });
+  
+  it('reports missing parameter', function () {
+    try {
+      new Injector().inject(withParameter, {});
+    } catch (e) {
+      if (e.message !== 'Missing parameter \'a\'') throw e;
+    }
+  });
 });
