@@ -110,3 +110,22 @@ describe('instrumentErrorReporting', function () {
       }
   });
 });
+
+describe('getFunctionArgumentNames', function () {
+  it('returns argument names array', function () {
+    var result = require('..').getFunctionArgumentNames('function (a) {}');
+    
+    assert(result.length === 1);
+    assert(result[0] === 'a');
+  });
+  it('returns empty argument names array', function () {
+    var result = require('..').getFunctionArgumentNames('function () {}');
+    
+    assert(result.length === 0);
+  });
+  it('takes function objects as parametrs', function () {
+    var result = require('..').getFunctionArgumentNames(function () {});
+    
+    assert(result.length === 0);
+  });
+});
