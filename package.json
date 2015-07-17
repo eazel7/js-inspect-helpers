@@ -1,6 +1,6 @@
 {
   "name": "js-inspect-helpers",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "Helpers for inspecting JS code",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,8 @@
   "dependencies": {
     "astronaut": "^0.1.4",
     "esprima": "^2.4.1",
-    "estraverse": "^4.1.0"
+    "estraverse": "^4.1.0",
+    "function-body-regex": "0.0.3"
   },
   "repository": {
     "type": "git",

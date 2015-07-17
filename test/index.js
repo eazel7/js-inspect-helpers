@@ -123,9 +123,33 @@ describe('getFunctionArgumentNames', function () {
     
     assert(result.length === 0);
   });
-  it('takes function objects as parametrs', function () {
+  it('takes function objects as parameter', function () {
     var result = require('..').getFunctionArgumentNames(function () {});
     
     assert(result.length === 0);
   });
 });
+
+describe('getFunctionBody', function () {
+  it('returns function body', function () {
+    var result = require('..').getFunctionBody('function (a) {console.log(1);}'); 
+    assert(result === 'console.log(1);');
+  });
+  it('takes function objects as parameter', function () {
+    var result = require('..').getFunctionBody(function (a) {console.log(1);});
+    assert(result === 'console.log(1);');
+  });
+});
+
+describe('getFunctionName', function () {
+  it('returns function name', function () {
+    var result = require('..').getFunctionName('function myFunction(a) {}'); 
+    assert(result === 'myFunction');
+  });
+  it('takes function objects as parameter', function () {
+    var result = require('..').getFunctionName(function myFunction(a) {});
+    
+    assert(result === 'myFunction');
+  });
+});
+

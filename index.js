@@ -174,7 +174,26 @@ function getFunctionArgumentNames(fn) {
   return argNames;
 }
 
+function getFunctionBody(code) {
+  if (typeof(code) === 'function') code = code.toString();
+  
+  var parts = require('function-body-regex').exec(code);
+  
+  return parts ? parts[1] || '' : '';
+}
+
+function getFunctionName(code) {
+  if (typeof(code) === 'function') return code.name;
+  if (typeof(code) === 'string') {
+    var ast = esprima.parse(code);
+    
+    return ast.body[0].id.name;
+  }
+}
+
 module.exports = {
+  getFunctionName: getFunctionName,
+  getFunctionBody: getFunctionBody,
   getFunctionArgumentNames: getFunctionArgumentNames,
   getGlobalVariableNames: getGlobalVariableNames,
   instrumentErrorReporting: instrumentErrorReporting
