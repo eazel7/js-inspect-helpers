@@ -74,7 +74,7 @@ describe('Wrapper', function () {
   });
   
   it('.wrapAsync returns a promise object when wrapping functions', function (done) {
-    var wrapper = new Wrapper({}, {});
+    var wrapper = new Wrapper();
     
     var wrapped = wrapper.wrapAsync(function (a, b) {
       return a + b;
@@ -86,5 +86,41 @@ describe('Wrapper', function () {
       
       done();
     });
+  });
+  
+  it('.wrapConstructorSync wraps before methods prototype with map', function (done) {
+    var wrapper = new Wrapper();
+    
+    function MyClass() {
+    }
+    
+    MyClass.prototype.test1 = function () {
+    };
+    
+    var Wrapped = wrapper.wrapConstructorSync(MyClass, {test1: function () {
+      done();
+    }});
+    
+    var obj = new Wrapped(1,2);
+    
+    obj.test1();
+  });
+  
+  it('.wrapConstructorSync wraps after methods prototype with map', function (done) {
+    var wrapper = new Wrapper();
+    
+    function MyClass() {
+    }
+    
+    MyClass.prototype.test1 = function () {
+    };
+    
+    var Wrapped = wrapper.wrapConstructorSync(MyClass, {}, {test1: function () {
+      done();
+    }});
+    
+    var obj = new Wrapped(1,2);
+    
+    obj.test1();
   });
 });

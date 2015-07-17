@@ -3,6 +3,27 @@ var Defer = require('q').defer;
 function Wrapper() {
 }
 
+Wrapper.prototype.wrapConstructorSync = function (original, mapBefore, mapAfter) {
+  mapBefore = mapBefore || {};
+  mapAfter = mapAfter || {};
+  var wrapSync = this.wrapSync.bind(this);
+  
+  var createConstructor = function (original, mapBefore, mapAfter, wrapSync) {
+    var constructor = function () {
+      original.apply(this, arguments);
+    };
+    
+    for (var k in original.prototype) {
+      if (typeof(original.prototype[k]) !== 'function') continue;
+      constructor.prototype[k] = wrapSync(original.prototype[k], mapBefore[k], mapAfter[k]);
+    }
+    
+    return constructor;
+  };
+  
+  return createConstructor(original, mapBefore, mapAfter, wrapSync);
+};
+
 Wrapper.prototype.wrapSync = function (original, before, after) {
   var newFn = function (original, before, after) {
     var newConstructor = function () {
