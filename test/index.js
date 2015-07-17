@@ -153,3 +153,10 @@ describe('getFunctionName', function () {
   });
 });
 
+describe('injector', function () {
+  it('creates Injector object', function () {
+    var injector = require('..').createInjector();
+    
+    assert(injector.constructor === require('../injector'));
+  });
+});
