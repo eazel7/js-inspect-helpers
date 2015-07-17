@@ -81,4 +81,32 @@ describe('instrumentErrorReporting', function () {
         assert(reported[0].name === 'myCode');
       }
   });
+  
+  it('should not instrument try{}catch{} blocks', function () {
+      var code = 'try {\n' +
+                 '  throw new Error(\'Some error: \' + i);\n' +
+                 '}catch(e)\n{' +
+                 'throw e;' +
+                 '}';
+      var result = require('..').instrumentErrorReporting(code, 'myCode', 'reportError');
+    
+      var reported = [];
+    
+      try {
+        require('vm').runInNewContext(result, {
+          reportError: function (e, name) {
+            reported.push({
+              e: e,
+              name: name
+            });
+          }
+        });
+        
+        assert.fail('Exception not thrown');
+      } catch (e) {
+        assert(reported.length === 1);
+        assert(reported[0].e === e);
+        assert(reported[0].name === 'myCode');
+      }
+  });
 });

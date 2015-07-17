@@ -107,7 +107,9 @@ function instrumentErrorReporting(source, name, errorReportFn) {
                 node.parent &&
                 node.parent.data &&
                 (node.parent.data.type == "IfStatement" ||
-                node.parent.data.type == "ForStatement")))) {
+                node.parent.data.type == "ForStatement" ||
+                node.parent.data.type == "TryStatement" ||
+                node.parent.data.type == "CatchClause")))) {
                 
                 if (nodeAst.body.length) {
                     marks.push({
